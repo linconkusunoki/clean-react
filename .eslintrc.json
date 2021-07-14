@@ -1,7 +1,14 @@
 {
   "extends": ["plugin:prettier/recommended"],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.json",
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+      "modules": true
+    }
   },
   "rules": {
     "@typescript-eslint/consistent-type-definitions": "off",
