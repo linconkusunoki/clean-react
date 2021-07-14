@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest --passWithNoTests",
+    "test:watch": "npm test -- --watch",
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:ci": "npm test -- --coverage"
   },
   "keywords": [],
   "author": "",
@@ -20,7 +23,7 @@
     "eslint-plugin-promise": "^5.1.0",
     "eslint-plugin-standard": "^5.0.0",
     "git-commit-msg-linter": "^3.2.6",
-    "husky": "^7.0.1",
+    "husky": "4.2.5",
     "jest": "^27.0.6",
     "lint-staged": "^11.0.1",
     "ts-jest": "^27.0.3",
