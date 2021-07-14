@@ -1,5 +1,5 @@
 {
-  "extends": "standard-with-typescript",
+  "extends": ["plugin:prettier/recommended"],
   "parserOptions": {
     "project": "./tsconfig.json"
   },
