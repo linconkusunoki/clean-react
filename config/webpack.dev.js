@@ -1,17 +1,9 @@
-const path = require('path')
-const { CleanWebpackPlugin } = require('clean-webpack-plugin')
+const HtmlWebpackPlugin = require('html-webpack-plugin')
+const { merge } = require('webpack-merge')
+const common = require('./webpack.common')
 
-module.exports = {
+module.exports = merge(common, {
   mode: 'development',
-  entry: './src/main/index.tsx',
-  output: {
-    path: path.join(__dirname, 'public/js'),
-    publicPath: '/public/js',
-    fileName: 'bundle.js'
-  },
-  resolve: {
-    extensions: ['.ts', '.tsx', '.js', '.scss']
-  },
   module: {
     rules: [
       {
@@ -38,14 +30,16 @@ module.exports = {
       }
     ]
   },
+  devtool: 'inline-source-map',
   devServer: {
-    contentBase: './public',
+    contentBase: '../public',
     writeToDisk: true,
-    historyApiFallback: true
+    historyApiFallback: true,
+    port: 3000
   },
-  externals: {
-    react: 'React',
-    'react-dom': 'ReactDOM'
-  },
-  plugins: [new CleanWebpackPlugin()]
-}
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: 'config/template.dev.html'
+    })
+  ]
+})

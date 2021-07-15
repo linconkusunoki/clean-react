@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack-dev-server --open",
+    "dev": "webpack serve --config config/webpack.dev.js --progress --open",
     "lint": "eslint 'src/**/*.{js,ts,tsx}' --quiet --fix",
     "test": "jest --passWithNoTests --no-cache --runInBand",
     "test:watch": "npm test -- --watch",
@@ -15,6 +15,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
     "@types/axios": "^0.14.0",
     "@types/faker": "^5.5.7",
     "@types/jest": "^26.0.24",
@@ -37,6 +39,7 @@
     "eslint-plugin-standard": "^5.0.0",
     "faker": "^5.5.3",
     "git-commit-msg-linter": "^3.2.6",
+    "html-webpack-plugin": "^5.3.2",
     "husky": "4.2.5",
     "identity-obj-proxy": "^3.0.0",
     "jest": "^27.0.6",
@@ -50,7 +53,8 @@
     "typescript": "^4.3.5",
     "webpack": "^5.44.0",
     "webpack-cli": "^4.7.2",
-    "webpack-dev-server": "^3.11.2"
+    "webpack-dev-server": "^3.11.2",
+    "webpack-merge": "^5.8.0"
   },
   "dependencies": {
     "axios": "^0.21.1",

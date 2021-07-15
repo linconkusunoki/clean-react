@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "module": "ESNext",
     "moduleResolution": "Node",
-    "jsx": "react",
+    "jsx": "react-jsx",
     "rootDir": "src",
     "baseUrl": "src",
     "allowJs": true,
