@@ -10,6 +10,7 @@ module.exports = {
   },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', 'scss'],
+    modules: [path.resolve(__dirname, '../src'), 'node_modules'],
     alias: {
       '@': path.join(__dirname, '../src')
     }
