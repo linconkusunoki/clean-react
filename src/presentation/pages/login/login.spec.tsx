@@ -1,5 +1,6 @@
 import { render, RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import faker from 'faker'
 
 import { ValidationSpy } from 'presentation/test/mock-validation'
 import { Login } from './login'
@@ -47,18 +48,20 @@ describe('Login component', () => {
         name: /email/i
       }) as HTMLInputElement
 
-      userEvent.type(emailField, 'any_email')
+      const email = faker.internet.email()
+      userEvent.type(emailField, email)
       expect(validationSpy.fieldName).toBe('email')
-      expect(validationSpy.fieldValue).toBe('any_email')
+      expect(validationSpy.fieldValue).toBe(email)
     })
 
     it('should call Validation with correct password', () => {
       const { validationSpy } = makeSut()
       const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
 
-      userEvent.type(passwordField, 'any_password')
+      const password = faker.internet.password()
+      userEvent.type(passwordField, password)
       expect(validationSpy.fieldName).toBe('password')
-      expect(validationSpy.fieldValue).toBe('any_password')
+      expect(validationSpy.fieldValue).toBe(password)
     })
   })
 })
