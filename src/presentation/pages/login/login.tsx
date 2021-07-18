@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState } from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -33,8 +33,13 @@ export const Login = ({ validation }: LoginProps) => {
     })
   }, [state.email, state.password])
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setState({ ...state, [event.target.name]: event.target.value })
+  }
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+    event.preventDefault()
+    setState({ ...state, isLoading: true })
   }
 
   return (
@@ -45,7 +50,10 @@ export const Login = ({ validation }: LoginProps) => {
           <Col />
 
           <Col>
-            <Form className="bg-white rounded-3 shadow-sm p-4">
+            <Form
+              onSubmit={handleSubmit}
+              className="bg-white rounded-3 shadow-sm p-4"
+            >
               <Form.Group className="mb-3" controlId="email">
                 <Form.Label>Email</Form.Label>
                 <Form.Control
@@ -92,11 +100,12 @@ export const Login = ({ validation }: LoginProps) => {
                     <span
                       className="spinner-grow spinner-grow-sm"
                       role="status"
+                      data-testid="spinner"
                       aria-hidden="true"
                     />
                   )}
                   <span className={state.isLoading ? 'visually-hidden' : ''}>
-                    Entrar
+                    Enviar
                   </span>
                 </Button>
 
