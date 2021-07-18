@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { ChangeEvent, useState } from 'react'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -6,16 +6,31 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
 import { Header } from 'presentation/components'
+import { Validation } from 'presentation/protocols/validation'
+import { useEffect } from 'react'
 
-export const Login = () => {
-  const [state] = useState({
-    isLoading: false
+type LoginProps = {
+  validation?: Validation
+}
+
+export const Login = ({ validation }: LoginProps) => {
+  const [state, setState] = useState({
+    isLoading: false,
+    email: ''
   })
   const [errorState] = useState({
     main: '',
     email: 'Campo obrigatório',
     password: 'Campo obrigatório'
   })
+
+  useEffect(() => {
+    validation.validate({ email: state.email })
+  }, [state.email])
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setState({ ...state, [event.target.name]: event.target.value })
+  }
 
   return (
     <div>
@@ -32,6 +47,7 @@ export const Login = () => {
                   name="email"
                   type="email"
                   placeholder="Digite seu email"
+                  onChange={handleChange}
                   required
                 />
               </Form.Group>
