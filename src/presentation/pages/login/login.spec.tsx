@@ -65,6 +65,16 @@ describe('Login component', () => {
       expect(errorMessage.textContent).toBe(validationStub.errorMessage)
     })
 
+    it('should show valid email state if validation succeeds', () => {
+      const { validationStub } = makeSut()
+      validationStub.errorMessage = null
+      const emailField = screen.getByLabelText(/senha/i) as HTMLInputElement
+
+      userEvent.type(emailField, faker.internet.email())
+      const errorMessage = screen.queryByTestId('error-email')
+      expect(errorMessage).toBeNull()
+    })
+
     it('should show valid password state if validation succeeds', () => {
       const { validationStub } = makeSut()
       validationStub.errorMessage = null
