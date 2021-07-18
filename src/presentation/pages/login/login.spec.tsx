@@ -7,14 +7,17 @@ import { Login } from './login'
 
 type SutTypes = {
   sut: RenderResult
-  validationStub: ValidationStub
 }
 
-const makeSut = (): SutTypes => {
+type SutParams = {
+  validationError: string
+}
+
+const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
-  validationStub.errorMessage = faker.random.words()
+  validationStub.errorMessage = params?.validationError
   const sut = render(<Login validation={validationStub} />)
-  return { sut, validationStub }
+  return { sut }
 }
 
 describe('Login component', () => {
@@ -44,42 +47,37 @@ describe('Login component', () => {
 
   describe('validation', () => {
     it('should show email error if Validation fails', () => {
-      const { validationStub } = makeSut()
-
+      const validationError = faker.random.words()
+      makeSut({ validationError })
       const emailField = screen.getByRole('textbox', {
         name: /email/i
       }) as HTMLInputElement
 
       userEvent.type(emailField, faker.internet.email())
       const errorMessage = screen.getByTestId('error-email')
-      expect(errorMessage.textContent).toBe(validationStub.errorMessage)
+      expect(errorMessage.textContent).toBe(validationError)
     })
 
     it('should show password error if Validation fails', () => {
-      const { validationStub } = makeSut()
-
+      const validationError = faker.random.words()
+      makeSut({ validationError })
       const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
-
       userEvent.type(passwordField, faker.internet.password())
       const errorMessage = screen.getByTestId('error-password')
-      expect(errorMessage.textContent).toBe(validationStub.errorMessage)
+      expect(errorMessage.textContent).toBe(validationError)
     })
 
     it('should show valid email state if validation succeeds', () => {
-      const { validationStub } = makeSut()
-      validationStub.errorMessage = null
+      makeSut()
       const emailField = screen.getByLabelText(/senha/i) as HTMLInputElement
-
       userEvent.type(emailField, faker.internet.email())
       const errorMessage = screen.queryByTestId('error-email')
       expect(errorMessage).toBeNull()
     })
 
     it('should show valid password state if validation succeeds', () => {
-      const { validationStub } = makeSut()
-      validationStub.errorMessage = null
+      makeSut()
       const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
-
       userEvent.type(passwordField, faker.internet.password())
       const errorMessage = screen.queryByTestId('error-password')
       expect(errorMessage).toBeNull()
