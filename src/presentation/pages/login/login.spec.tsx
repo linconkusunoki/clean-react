@@ -1,17 +1,26 @@
-import { render, screen } from '@testing-library/react'
+import { render, RenderResult, screen } from '@testing-library/react'
 
 import { Login } from './login'
+
+type SutTypes = {
+  sut: RenderResult
+}
+
+const makeSut = (): SutTypes => {
+  const sut = render(<Login />)
+  return { sut }
+}
 
 describe('Login component', () => {
   describe('initial state', () => {
     it('should not render any error', () => {
-      render(<Login />)
+      makeSut()
       const errorMessage = screen.queryByText(/error/)
       expect(errorMessage).toBeNull()
     })
 
     it('should render email field correctly', () => {
-      render(<Login />)
+      makeSut()
       const emailField = screen.getByRole('textbox', {
         name: /email/i
       }) as HTMLInputElement
@@ -20,7 +29,7 @@ describe('Login component', () => {
     })
 
     it('should render password field correctly', () => {
-      render(<Login />)
+      makeSut()
       const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
       expect(passwordField.value).toBe('')
       expect(passwordField.required).toBeTruthy()
