@@ -60,5 +60,13 @@ describe('Login component', () => {
       userEvent.type(emailField, 'any_email')
       expect(validationSpy.input).toEqual({ email: 'any_email' })
     })
+
+    it('should call Validation with correct password', () => {
+      const { validationSpy } = makeSut()
+      const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
+
+      userEvent.type(passwordField, 'any_password')
+      expect(validationSpy.input).toEqual({ password: 'any_password' })
+    })
   })
 })
