@@ -82,5 +82,14 @@ describe('Login component', () => {
       const errorMessage = screen.queryByTestId('error-password')
       expect(errorMessage).toBeNull()
     })
+
+    it('should disable and change content of submit button on submit', () => {
+      makeSut()
+      const submitButton = screen.getByText(/enviar/i)
+      userEvent.click(submitButton)
+      expect(submitButton.closest('button')).toBeDisabled()
+      expect(submitButton.className).toBe('visually-hidden')
+      expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    })
   })
 })
