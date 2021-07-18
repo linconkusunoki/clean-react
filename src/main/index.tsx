@@ -1,4 +1,4 @@
 import ReactDOM from 'react-dom'
-import { Login } from 'presentation/pages/login/login'
+import { Router } from 'presentation/components'
 
-ReactDOM.render(<Login />, document.getElementById('root'))
+ReactDOM.render(<Router />, document.getElementById('root'))
