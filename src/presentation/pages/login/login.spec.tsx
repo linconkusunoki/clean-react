@@ -2,18 +2,19 @@ import { render, RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import faker from 'faker'
 
-import { ValidationSpy } from 'presentation/test/mock-validation'
+import { ValidationStub } from 'presentation/test/mock-validation'
 import { Login } from './login'
 
 type SutTypes = {
   sut: RenderResult
-  validationSpy: ValidationSpy
+  validationStub: ValidationStub
 }
 
 const makeSut = (): SutTypes => {
-  const validationSpy = new ValidationSpy()
-  const sut = render(<Login validation={validationSpy} />)
-  return { sut, validationSpy }
+  const validationStub = new ValidationStub()
+  validationStub.errorMessage = faker.random.words()
+  const sut = render(<Login validation={validationStub} />)
+  return { sut, validationStub }
 }
 
 describe('Login component', () => {
@@ -42,26 +43,26 @@ describe('Login component', () => {
   })
 
   describe('validation', () => {
-    it('should call Validation with correct email', () => {
-      const { validationSpy } = makeSut()
+    it('should show email error if Validation fails', () => {
+      const { validationStub } = makeSut()
+
       const emailField = screen.getByRole('textbox', {
         name: /email/i
       }) as HTMLInputElement
 
-      const email = faker.internet.email()
-      userEvent.type(emailField, email)
-      expect(validationSpy.fieldName).toBe('email')
-      expect(validationSpy.fieldValue).toBe(email)
+      userEvent.type(emailField, faker.internet.email())
+      const errorMessage = screen.getByTestId('error-email')
+      expect(errorMessage.textContent).toBe(validationStub.errorMessage)
     })
 
-    it('should call Validation with correct password', () => {
-      const { validationSpy } = makeSut()
+    it('should show password error if Validation fails', () => {
+      const { validationStub } = makeSut()
+
       const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
 
-      const password = faker.internet.password()
-      userEvent.type(passwordField, password)
-      expect(validationSpy.fieldName).toBe('password')
-      expect(validationSpy.fieldValue).toBe(password)
+      userEvent.type(passwordField, faker.internet.password())
+      const errorMessage = screen.getByTestId('error-password')
+      expect(errorMessage.textContent).toBe(validationStub.errorMessage)
     })
   })
 })
