@@ -1,3 +1,4 @@
 import ReactDOM from 'react-dom'
+import { Login } from 'presentation/pages/login/login'
 
-ReactDOM.render(<h1>hello</h1>, document.getElementById('root'))
+ReactDOM.render(<Login />, document.getElementById('root'))
