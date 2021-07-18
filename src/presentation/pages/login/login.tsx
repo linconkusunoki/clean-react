@@ -16,7 +16,8 @@ type LoginProps = {
 export const Login = ({ validation }: LoginProps) => {
   const [state, setState] = useState({
     isLoading: false,
-    email: ''
+    email: '',
+    password: ''
   })
   const [errorState] = useState({
     main: '',
@@ -27,6 +28,10 @@ export const Login = ({ validation }: LoginProps) => {
   useEffect(() => {
     validation.validate({ email: state.email })
   }, [state.email])
+
+  useEffect(() => {
+    validation.validate({ password: state.password })
+  }, [state.password])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [event.target.name]: event.target.value })
@@ -47,6 +52,7 @@ export const Login = ({ validation }: LoginProps) => {
                   name="email"
                   type="email"
                   placeholder="Digite seu email"
+                  value={state.email}
                   onChange={handleChange}
                   required
                 />
@@ -58,6 +64,8 @@ export const Login = ({ validation }: LoginProps) => {
                   name="password"
                   type="password"
                   placeholder="Digite sua senha"
+                  value={state.password}
+                  onChange={handleChange}
                   required
                 />
               </Form.Group>
