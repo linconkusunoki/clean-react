@@ -19,19 +19,19 @@ export const Login = ({ validation }: LoginProps) => {
     email: '',
     password: ''
   })
-  const [errorState] = useState({
+  const [errorState, setErrorState] = useState({
     main: '',
-    email: 'Campo obrigatório',
-    password: 'Campo obrigatório'
+    email: '',
+    password: ''
   })
 
   useEffect(() => {
-    validation.validate('email', state.email)
-  }, [state.email])
-
-  useEffect(() => {
-    validation.validate('password', state.password)
-  }, [state.password])
+    setErrorState({
+      ...errorState,
+      email: validation.validate('email', state.email),
+      password: validation.validate('password', state.password)
+    })
+  }, [state.email, state.password])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setState({ ...state, [event.target.name]: event.target.value })
@@ -56,6 +56,11 @@ export const Login = ({ validation }: LoginProps) => {
                   onChange={handleChange}
                   required
                 />
+                {errorState.email && (
+                  <Form.Text data-testid="error-email">
+                    {errorState.email}
+                  </Form.Text>
+                )}
               </Form.Group>
 
               <Form.Group className="mb-3" controlId="password">
@@ -68,6 +73,11 @@ export const Login = ({ validation }: LoginProps) => {
                   onChange={handleChange}
                   required
                 />
+                {errorState.password && (
+                  <Form.Text data-testid="error-password">
+                    {errorState.password}
+                  </Form.Text>
+                )}
               </Form.Group>
 
               {errorState.main && <p className="text-danger">Error</p>}
