@@ -64,5 +64,15 @@ describe('Login component', () => {
       const errorMessage = screen.getByTestId('error-password')
       expect(errorMessage.textContent).toBe(validationStub.errorMessage)
     })
+
+    it('should show valid password state if validation succeeds', () => {
+      const { validationStub } = makeSut()
+      validationStub.errorMessage = null
+      const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
+
+      userEvent.type(passwordField, faker.internet.password())
+      const errorMessage = screen.queryByTestId('error-password')
+      expect(errorMessage).toBeNull()
+    })
   })
 })
