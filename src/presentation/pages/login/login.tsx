@@ -4,20 +4,13 @@ import Col from 'react-bootstrap/Col'
 import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
+import { Header } from 'presentation/components'
 import styles from './login.styles.scss'
 
-export const Login: React.FC = () => {
+export const Login = () => {
   return (
     <div className={styles.login}>
-      <header className={styles.header}></header>
-      <Container>
-        <header className="py-3 mb-4 border-bottom">
-          <a href="/" className="mb-3 text-dark text-decoration-none">
-            <h4>Enquete para programadores</h4>
-          </a>
-        </header>
-      </Container>
-
+      <Header />
       <Container>
         <Row>
           <Col />
@@ -49,8 +42,6 @@ export const Login: React.FC = () => {
           <Col />
         </Row>
       </Container>
-
-      <footer className={styles.footer}></footer>
     </div>
   )
 }
