@@ -8,12 +8,14 @@ import Button from 'react-bootstrap/Button'
 import { Header } from 'presentation/components'
 import { Validation } from 'presentation/protocols/validation'
 import { useEffect } from 'react'
+import { Authentication } from 'domain/usecases'
 
 type LoginProps = {
   validation?: Validation
+  authentication?: Authentication
 }
 
-export const Login = ({ validation }: LoginProps) => {
+export const Login = ({ validation, authentication }: LoginProps) => {
   const [state, setState] = useState({
     isLoading: false,
     email: '',
@@ -37,9 +39,12 @@ export const Login = ({ validation }: LoginProps) => {
     setState({ ...state, [event.target.name]: event.target.value })
   }
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ): Promise<void> => {
     event.preventDefault()
     setState({ ...state, isLoading: true })
+    await authentication.auth({ email: state.email, password: state.password })
   }
 
   return (
