@@ -9,6 +9,7 @@ import { Header } from 'presentation/components'
 import { Validation } from 'presentation/protocols/validation'
 import { useEffect } from 'react'
 import { Authentication } from 'domain/usecases'
+import { Link } from 'react-router-dom'
 
 type LoginProps = {
   validation?: Validation
@@ -132,9 +133,11 @@ export const Login = ({ validation, authentication }: LoginProps) => {
                   </span>
                 </Button>
 
-                <Button variant="secondary" type="button">
-                  Criar conta
-                </Button>
+                <Link to="/register">
+                  <Button variant="secondary" type="button">
+                    Criar conta
+                  </Button>
+                </Link>
               </div>
             </Form>
           </Col>
