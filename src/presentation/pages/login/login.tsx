@@ -1,4 +1,5 @@
 import { ChangeEvent, FormEvent, useState } from 'react'
+import { Link, useHistory } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
 import Col from 'react-bootstrap/Col'
@@ -9,7 +10,6 @@ import { Header } from 'presentation/components'
 import { Validation } from 'presentation/protocols/validation'
 import { useEffect } from 'react'
 import { Authentication } from 'domain/usecases'
-import { Link } from 'react-router-dom'
 
 type LoginProps = {
   validation?: Validation
@@ -17,6 +17,7 @@ type LoginProps = {
 }
 
 export const Login = ({ validation, authentication }: LoginProps) => {
+  const history = useHistory()
   const [state, setState] = useState({
     isLoading: false,
     email: '',
@@ -56,6 +57,7 @@ export const Login = ({ validation, authentication }: LoginProps) => {
         password: state.password
       })
       localStorage.setItem('accessToken', account.accessToken)
+      history.replace('/')
     } catch (error) {
       setState({ ...state, isLoading: false })
       setErrorState({ ...errorState, main: error.message })
