@@ -1,12 +1,25 @@
 import { render, RenderResult, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import { AccountModel } from 'domain/models'
+import { mockAccountModel } from 'domain/test'
+import { Authentication, AuthenticationParams } from 'domain/usecases'
 import faker from 'faker'
 
 import { ValidationStub } from 'presentation/test/mock-validation'
 import { Login } from './login'
 
+class AuthenticationSpy implements Authentication {
+  account = mockAccountModel()
+  params: AuthenticationParams
+  auth(params: AuthenticationParams): Promise<AccountModel> {
+    this.params = params
+    return Promise.resolve(this.account)
+  }
+}
+
 type SutTypes = {
   sut: RenderResult
+  authenticationSpy: AuthenticationSpy
 }
 
 type SutParams = {
@@ -15,9 +28,12 @@ type SutParams = {
 
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
+  const authenticationSpy = new AuthenticationSpy()
   validationStub.errorMessage = params?.validationError
-  const sut = render(<Login validation={validationStub} />)
-  return { sut }
+  const sut = render(
+    <Login validation={validationStub} authentication={authenticationSpy} />
+  )
+  return { sut, authenticationSpy }
 }
 
 describe('Login component', () => {
@@ -90,6 +106,28 @@ describe('Login component', () => {
       expect(submitButton.closest('button')).toBeDisabled()
       expect(submitButton.className).toBe('visually-hidden')
       expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    })
+  })
+
+  describe('authentication', () => {
+    it('should call authentication with correct values', () => {
+      const { authenticationSpy } = makeSut()
+      const email = faker.internet.email()
+      const password = faker.internet.password()
+      const submitButton = screen.getByText(/enviar/i)
+      const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
+      const emailField = screen.getByRole('textbox', {
+        name: /email/i
+      }) as HTMLInputElement
+
+      userEvent.type(emailField, email)
+      userEvent.type(passwordField, password)
+      userEvent.click(submitButton)
+
+      expect(authenticationSpy.params).toEqual({
+        email,
+        password
+      })
     })
   })
 })
