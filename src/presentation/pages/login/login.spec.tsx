@@ -1,6 +1,9 @@
 import faker from 'faker'
 import userEvent from '@testing-library/user-event'
+import { Router } from 'react-router-dom'
+import { createMemoryHistory } from 'history'
 import { render, RenderResult, screen, waitFor } from '@testing-library/react'
+import 'jest-localstorage-mock'
 
 import { AuthenticationSpy } from 'presentation/test/mock-authentication'
 import { ValidationStub } from 'presentation/test/mock-validation'
@@ -16,12 +19,16 @@ type SutParams = {
   validationError: string
 }
 
+const history = createMemoryHistory()
+
 const makeSut = (params?: SutParams): SutTypes => {
   const validationStub = new ValidationStub()
   const authenticationSpy = new AuthenticationSpy()
   validationStub.errorMessage = params?.validationError
   const sut = render(
-    <Login validation={validationStub} authentication={authenticationSpy} />
+    <Router history={history}>
+      <Login validation={validationStub} authentication={authenticationSpy} />
+    </Router>
   )
   return { sut, authenticationSpy }
 }
@@ -55,6 +62,10 @@ const simulateFormSubmit = () => {
   userEvent.click(submitButton)
   return { submitButton }
 }
+
+beforeEach(() => {
+  jest.resetAllMocks()
+})
 
 describe('Login component', () => {
   describe('initial state', () => {
@@ -171,6 +182,30 @@ describe('Login component', () => {
         const mainError = screen.getByTestId('login-error-message')
         expect(mainError.textContent).toBe(error.message)
       })
+    })
+
+    it('should add access token to localStorage on success', async () => {
+      const { authenticationSpy } = makeSut()
+
+      populateEmailField()
+      populatePasswordField()
+      simulateFormSubmit()
+
+      await waitFor(() => {
+        expect(localStorage.setItem).toHaveBeenCalledWith(
+          'accessToken',
+          authenticationSpy.account.accessToken
+        )
+      })
+    })
+  })
+
+  describe('navigation', () => {
+    it('should go to register page', () => {
+      makeSut()
+      userEvent.click(screen.getByText(/criar conta/i))
+      expect(history.length).toBe(2)
+      expect(history.location.pathname).toBe('/register')
     })
   })
 })
