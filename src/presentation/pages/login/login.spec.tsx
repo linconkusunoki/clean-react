@@ -25,6 +25,36 @@ const makeSut = (params?: SutParams): SutTypes => {
   return { sut, authenticationSpy }
 }
 
+const getEmailField = () => {
+  return screen.getByRole('textbox', {
+    name: /email/i
+  }) as HTMLInputElement
+}
+
+const getPasswordField = () => {
+  return screen.getByLabelText(/senha/i) as HTMLInputElement
+}
+
+const getSubmitButton = () => {
+  return screen.getByText(/enviar/i)
+}
+
+const populateEmailField = (email = faker.internet.email()) => {
+  const emailField = getEmailField()
+  userEvent.type(emailField, email)
+}
+
+const populatePasswordField = (password = faker.internet.password()) => {
+  const passwordField = getPasswordField()
+  userEvent.type(passwordField, password)
+}
+
+const simulateFormSubmit = () => {
+  const submitButton = getSubmitButton()
+  userEvent.click(submitButton)
+  return { submitButton }
+}
+
 describe('Login component', () => {
   describe('initial state', () => {
     it('should not render any error', () => {
@@ -35,16 +65,14 @@ describe('Login component', () => {
 
     it('should render email field correctly', () => {
       makeSut()
-      const emailField = screen.getByRole('textbox', {
-        name: /email/i
-      }) as HTMLInputElement
+      const emailField = getEmailField()
       expect(emailField.value).toBe('')
       expect(emailField.required).toBeTruthy()
     })
 
     it('should render password field correctly', () => {
       makeSut()
-      const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
+      const passwordField = getPasswordField()
       expect(passwordField.value).toBe('')
       expect(passwordField.required).toBeTruthy()
     })
@@ -54,11 +82,7 @@ describe('Login component', () => {
     it('should show email error if Validation fails', () => {
       const validationError = faker.random.words()
       makeSut({ validationError })
-      const emailField = screen.getByRole('textbox', {
-        name: /email/i
-      }) as HTMLInputElement
-
-      userEvent.type(emailField, faker.internet.email())
+      populateEmailField()
       const errorMessage = screen.getByTestId('error-email')
       expect(errorMessage.textContent).toBe(validationError)
     })
@@ -66,32 +90,28 @@ describe('Login component', () => {
     it('should show password error if Validation fails', () => {
       const validationError = faker.random.words()
       makeSut({ validationError })
-      const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
-      userEvent.type(passwordField, faker.internet.password())
+      populatePasswordField()
       const errorMessage = screen.getByTestId('error-password')
       expect(errorMessage.textContent).toBe(validationError)
     })
 
     it('should show valid email state if validation succeeds', () => {
       makeSut()
-      const emailField = screen.getByLabelText(/senha/i) as HTMLInputElement
-      userEvent.type(emailField, faker.internet.email())
+      populateEmailField()
       const errorMessage = screen.queryByTestId('error-email')
       expect(errorMessage).toBeNull()
     })
 
     it('should show valid password state if validation succeeds', () => {
       makeSut()
-      const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
-      userEvent.type(passwordField, faker.internet.password())
+      populatePasswordField()
       const errorMessage = screen.queryByTestId('error-password')
       expect(errorMessage).toBeNull()
     })
 
     it('should disable and change content of submit button on submit', () => {
       makeSut()
-      const submitButton = screen.getByText(/enviar/i)
-      userEvent.click(submitButton)
+      const { submitButton } = simulateFormSubmit()
       expect(submitButton.closest('button')).toBeDisabled()
       expect(submitButton.className).toBe('visually-hidden')
       expect(screen.getByTestId('spinner')).toBeInTheDocument()
@@ -103,15 +123,10 @@ describe('Login component', () => {
       const { authenticationSpy } = makeSut()
       const email = faker.internet.email()
       const password = faker.internet.password()
-      const submitButton = screen.getByText(/enviar/i)
-      const passwordField = screen.getByLabelText(/senha/i) as HTMLInputElement
-      const emailField = screen.getByRole('textbox', {
-        name: /email/i
-      }) as HTMLInputElement
 
-      userEvent.type(emailField, email)
-      userEvent.type(passwordField, password)
-      userEvent.click(submitButton)
+      populateEmailField(email)
+      populatePasswordField(password)
+      simulateFormSubmit()
 
       expect(authenticationSpy.params).toEqual({
         email,
