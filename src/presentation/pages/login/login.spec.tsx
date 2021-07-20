@@ -57,9 +57,10 @@ const populatePasswordField = (password = faker.internet.password()) => {
   userEvent.type(passwordField, password)
 }
 
-const simulateFormSubmit = () => {
+const simulateFormSubmit = async () => {
   const submitButton = getSubmitButton()
   userEvent.click(submitButton)
+  await waitFor(() => screen.getByTestId('form-login'))
   return { submitButton }
 }
 
@@ -121,9 +122,9 @@ describe('Login component', () => {
       expect(errorMessage).toBeNull()
     })
 
-    it('should disable and change content of submit button on submit', () => {
+    it('should disable and change content of submit button on submit', async () => {
       makeSut()
-      const { submitButton } = simulateFormSubmit()
+      const { submitButton } = await simulateFormSubmit()
       expect(submitButton.closest('button')).toBeDisabled()
       expect(submitButton.className).toBe('visually-hidden')
       expect(screen.getByTestId('spinner')).toBeInTheDocument()
@@ -131,40 +132,37 @@ describe('Login component', () => {
   })
 
   describe('authentication', () => {
-    it('should call authentication with correct values', () => {
+    it('should call authentication with correct values', async () => {
       const { authenticationSpy } = makeSut()
       const email = faker.internet.email()
       const password = faker.internet.password()
 
       populateEmailField(email)
       populatePasswordField(password)
-      simulateFormSubmit()
+      await simulateFormSubmit()
 
-      expect(authenticationSpy.params).toEqual({
-        email,
-        password
-      })
+      expect(authenticationSpy.params).toEqual({ email, password })
     })
 
-    it('should call authentication only once', () => {
+    it('should call authentication only once', async () => {
       const { authenticationSpy } = makeSut()
       const email = faker.internet.email()
       const password = faker.internet.password()
 
       populateEmailField(email)
       populatePasswordField(password)
-      simulateFormSubmit()
-      simulateFormSubmit()
+      await simulateFormSubmit()
+      await simulateFormSubmit()
 
       expect(authenticationSpy.callsCount).toBe(1)
     })
 
-    it('should not call authentication if form is invalid', () => {
+    it('should not call authentication if form is invalid', async () => {
       const validationError = faker.random.words()
       const { authenticationSpy } = makeSut({ validationError })
 
       populateEmailField()
-      simulateFormSubmit()
+      await simulateFormSubmit()
 
       expect(authenticationSpy.callsCount).toBe(0)
     })
@@ -176,12 +174,10 @@ describe('Login component', () => {
 
       populateEmailField()
       populatePasswordField()
-      simulateFormSubmit()
+      await simulateFormSubmit()
 
-      await waitFor(() => {
-        const mainError = screen.getByTestId('login-error-message')
-        expect(mainError.textContent).toBe(error.message)
-      })
+      const mainError = screen.getByTestId('login-error-message')
+      expect(mainError.textContent).toBe(error.message)
     })
 
     it('should add access token to localStorage on success', async () => {
@@ -189,15 +185,12 @@ describe('Login component', () => {
 
       populateEmailField()
       populatePasswordField()
-      simulateFormSubmit()
+      await simulateFormSubmit()
 
-      await waitFor(() => {
-        expect(localStorage.setItem).toHaveBeenCalledWith(
-          'accessToken',
-          authenticationSpy.account.accessToken
-        )
-      })
-
+      expect(localStorage.setItem).toHaveBeenCalledWith(
+        'accessToken',
+        authenticationSpy.account.accessToken
+      )
       expect(history.length).toBe(1)
       expect(history.location.pathname).toBe('/')
     })

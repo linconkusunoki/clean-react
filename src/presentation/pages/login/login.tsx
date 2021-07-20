@@ -75,6 +75,7 @@ export const Login = ({ validation, authentication }: LoginProps) => {
             <Form
               onSubmit={handleSubmit}
               className="bg-white rounded-3 shadow-sm p-4"
+              data-testid="form-login"
             >
               <Form.Group className="mb-3" controlId="email">
                 <Form.Label>Email</Form.Label>
