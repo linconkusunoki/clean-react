@@ -42,18 +42,19 @@ export const Login = ({ validation, authentication }: LoginProps) => {
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
-    try {
-      event.preventDefault()
+    event.preventDefault()
 
+    try {
       if (errorState.email || errorState.password) {
         return
       }
 
       setState({ ...state, isLoading: true })
-      await authentication.auth({
+      const account = await authentication.auth({
         email: state.email,
         password: state.password
       })
+      localStorage.setItem('accessToken', account.accessToken)
     } catch (error) {
       setState({ ...state, isLoading: false })
       setErrorState({ ...errorState, main: error.message })
