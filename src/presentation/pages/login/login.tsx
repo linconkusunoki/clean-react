@@ -43,6 +43,11 @@ export const Login = ({ validation, authentication }: LoginProps) => {
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
     event.preventDefault()
+
+    if (errorState.email || errorState.password) {
+      return
+    }
+
     setState({ ...state, isLoading: true })
     await authentication.auth({ email: state.email, password: state.password })
   }
