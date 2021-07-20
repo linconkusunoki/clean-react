@@ -133,5 +133,18 @@ describe('Login component', () => {
         password
       })
     })
+
+    it('should call authentication only once', () => {
+      const { authenticationSpy } = makeSut()
+      const email = faker.internet.email()
+      const password = faker.internet.password()
+
+      populateEmailField(email)
+      populatePasswordField(password)
+      simulateFormSubmit()
+      simulateFormSubmit()
+
+      expect(authenticationSpy.callsCount).toBe(1)
+    })
   })
 })
