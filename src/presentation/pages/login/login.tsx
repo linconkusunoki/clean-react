@@ -42,14 +42,22 @@ export const Login = ({ validation, authentication }: LoginProps) => {
   const handleSubmit = async (
     event: FormEvent<HTMLFormElement>
   ): Promise<void> => {
-    event.preventDefault()
+    try {
+      event.preventDefault()
 
-    if (errorState.email || errorState.password) {
-      return
+      if (errorState.email || errorState.password) {
+        return
+      }
+
+      setState({ ...state, isLoading: true })
+      await authentication.auth({
+        email: state.email,
+        password: state.password
+      })
+    } catch (error) {
+      setState({ ...state, isLoading: false })
+      setErrorState({ ...errorState, main: error.message })
     }
-
-    setState({ ...state, isLoading: true })
-    await authentication.auth({ email: state.email, password: state.password })
   }
 
   return (
@@ -98,7 +106,11 @@ export const Login = ({ validation, authentication }: LoginProps) => {
                 )}
               </Form.Group>
 
-              {errorState.main && <p className="text-danger">Error</p>}
+              {errorState.main && (
+                <p className="text-danger" data-testid="login-error-message">
+                  {errorState.main}
+                </p>
+              )}
 
               <div className="d-grid gap-2">
                 <Button
