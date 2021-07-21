@@ -12,8 +12,8 @@ import { useEffect } from 'react'
 import { Authentication } from 'domain/usecases'
 
 type LoginProps = {
-  validation?: Validation
-  authentication?: Authentication
+  validation: Validation
+  authentication: Authentication
 }
 
 export const Login = ({ validation, authentication }: LoginProps) => {
