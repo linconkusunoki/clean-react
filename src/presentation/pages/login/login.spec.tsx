@@ -198,6 +198,21 @@ describe('Login component', () => {
       expect(history.length).toBe(1)
       expect(history.location.pathname).toBe('/')
     })
+
+    it('should present error if SaveAccessToken fails', async () => {
+      const { saveAccessTokenMock } = makeSut()
+      const error = new InvalidCredentialsError()
+      jest.spyOn(saveAccessTokenMock, 'save').mockImplementationOnce(() => {
+        throw error
+      })
+
+      populateEmailField()
+      populatePasswordField()
+      await simulateFormSubmit()
+
+      const mainError = screen.getByTestId('login-error-message')
+      expect(mainError.textContent).toBe(error.message)
+    })
   })
 
   describe('navigation', () => {
