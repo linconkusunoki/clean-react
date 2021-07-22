@@ -141,11 +141,14 @@ export const Login = ({
                   </span>
                 </Button>
 
-                <Link to="/register">
-                  <Button variant="secondary" type="button">
-                    Criar conta
-                  </Button>
-                </Link>
+                <Button
+                  variant="secondary"
+                  type="button"
+                  as={Link}
+                  to="/register"
+                >
+                  Criar conta
+                </Button>
               </div>
             </Form>
           </Col>
