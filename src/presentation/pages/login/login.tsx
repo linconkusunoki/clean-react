@@ -9,14 +9,19 @@ import Button from 'react-bootstrap/Button'
 import { Header } from 'presentation/components'
 import { Validation } from 'presentation/protocols/validation'
 import { useEffect } from 'react'
-import { Authentication } from 'domain/usecases'
+import { Authentication, SaveAccessToken } from 'domain/usecases'
 
 type LoginProps = {
   validation: Validation
   authentication: Authentication
+  saveAccessToken: SaveAccessToken
 }
 
-export const Login = ({ validation, authentication }: LoginProps) => {
+export const Login = ({
+  validation,
+  authentication,
+  saveAccessToken
+}: LoginProps) => {
   const history = useHistory()
   const [state, setState] = useState({
     isLoading: false,
@@ -56,7 +61,7 @@ export const Login = ({ validation, authentication }: LoginProps) => {
         email: state.email,
         password: state.password
       })
-      localStorage.setItem('accessToken', account.accessToken)
+      saveAccessToken.save(account.accessToken)
       history.replace('/')
     } catch (error) {
       setState({ ...state, isLoading: false })
