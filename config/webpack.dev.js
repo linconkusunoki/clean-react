@@ -1,5 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const { DefinePlugin } = require('webpack')
+const { EnvironmentPlugin } = require('webpack')
 const { merge } = require('webpack-merge')
 const common = require('./webpack.common')
 
@@ -42,8 +42,8 @@ module.exports = merge(common, {
     new HtmlWebpackPlugin({
       template: 'config/template.dev.html'
     }),
-    new DefinePlugin({
-      'process.env.API_URL': 'http://fordevs.herokuapp.com/api'
+    new EnvironmentPlugin({
+      API_URL: 'http://fordevs.herokuapp.com/api'
     })
   ]
 })
