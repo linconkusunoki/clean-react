@@ -3,16 +3,17 @@ import userEvent from '@testing-library/user-event'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
 import { render, RenderResult, screen, waitFor } from '@testing-library/react'
-import 'jest-localstorage-mock'
 
 import { AuthenticationSpy } from 'presentation/test/mock-authentication'
 import { ValidationStub } from 'presentation/test/mock-validation'
-import { Login } from './login'
+import { SaveAccessTokenMock } from 'presentation/test/mock-save-access-token'
 import { InvalidCredentialsError } from 'domain/errors'
+import { Login } from './login'
 
 type SutTypes = {
   sut: RenderResult
   authenticationSpy: AuthenticationSpy
+  saveAccessTokenMock: SaveAccessTokenMock
 }
 
 type SutParams = {
@@ -22,15 +23,20 @@ type SutParams = {
 const history = createMemoryHistory({ initialEntries: ['/login'] })
 
 const makeSut = (params?: SutParams): SutTypes => {
+  const saveAccessTokenMock = new SaveAccessTokenMock()
   const validationStub = new ValidationStub()
   const authenticationSpy = new AuthenticationSpy()
   validationStub.errorMessage = params?.validationError
   const sut = render(
     <Router history={history}>
-      <Login validation={validationStub} authentication={authenticationSpy} />
+      <Login
+        validation={validationStub}
+        authentication={authenticationSpy}
+        saveAccessToken={saveAccessTokenMock}
+      />
     </Router>
   )
-  return { sut, authenticationSpy }
+  return { sut, authenticationSpy, saveAccessTokenMock }
 }
 
 const getEmailField = () => {
@@ -180,17 +186,15 @@ describe('Login component', () => {
       expect(mainError.textContent).toBe(error.message)
     })
 
-    it('should add access token to localStorage on success', async () => {
-      const { authenticationSpy } = makeSut()
+    it('should call SaveAccessToken on success', async () => {
+      const { authenticationSpy, saveAccessTokenMock } = makeSut()
+      const { accessToken } = authenticationSpy.account
 
       populateEmailField()
       populatePasswordField()
       await simulateFormSubmit()
 
-      expect(localStorage.setItem).toHaveBeenCalledWith(
-        'accessToken',
-        authenticationSpy.account.accessToken
-      )
+      expect(saveAccessTokenMock.accessToken).toBe(accessToken)
       expect(history.length).toBe(1)
       expect(history.location.pathname).toBe('/')
     })
