@@ -10,6 +10,7 @@
     "test:watch": "npm test -- --watch",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage",
+    "test:coveralls": "npm run test:ci && coveralls < coverage/lcov.info",
     "check": "npm-check -u -s"
   },
   "keywords": [],
@@ -31,6 +32,7 @@
     "@typescript-eslint/parser": "^4.28.4",
     "babel-eslint": "^10.1.0",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
+    "coveralls": "^3.1.1",
     "css-loader": "^6.2.0",
     "eslint": "^7.31.0",
     "eslint-config-prettier": "^8.3.0",
