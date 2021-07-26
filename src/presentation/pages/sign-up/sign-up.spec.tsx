@@ -1,13 +1,14 @@
 import faker from 'faker'
-import userEvent from '@testing-library/user-event'
 import { Router } from 'react-router-dom'
 import { createMemoryHistory } from 'history'
-import { render, RenderResult, screen, waitFor } from '@testing-library/react'
+import { render, RenderResult, screen } from '@testing-library/react'
 
-import { AuthenticationSpy } from 'presentation/test/mock-authentication'
-import { ValidationStub } from 'presentation/test/mock-validation'
-import { SaveAccessTokenMock } from 'presentation/test/mock-save-access-token'
-import { InvalidCredentialsError } from 'domain/errors'
+import {
+  AuthenticationSpy,
+  ValidationStub,
+  SaveAccessTokenMock,
+  Helper
+} from 'presentation/test'
 import { SignUp } from './sign-up'
 
 type SutTypes = {
@@ -39,22 +40,6 @@ const makeSut = (params?: SutParams): SutTypes => {
   return { sut, authenticationSpy, saveAccessTokenMock }
 }
 
-const getNameField = () => {
-  return screen.getByRole('textbox', {
-    name: /nome/i
-  }) as HTMLInputElement
-}
-
-const getEmailField = () => {
-  return screen.getByRole('textbox', {
-    name: /email/i
-  }) as HTMLInputElement
-}
-
-const getPasswordField = () => {
-  return screen.getAllByLabelText(/senha/i) as HTMLInputElement[]
-}
-
 describe('Login component', () => {
   describe('initial state', () => {
     it('should not render any error', () => {
@@ -65,30 +50,64 @@ describe('Login component', () => {
 
     it('should render name field correctly', () => {
       makeSut()
-      const nameField = getNameField()
+      const nameField = Helper.getNameField()
       expect(nameField.value).toBe('')
       expect(nameField.required).toBeTruthy()
     })
 
     it('should render email field correctly', () => {
       makeSut()
-      const emailField = getEmailField()
+      const emailField = Helper.getEmailField()
       expect(emailField.value).toBe('')
       expect(emailField.required).toBeTruthy()
     })
 
     it('should render password field correctly', () => {
       makeSut()
-      const passwordField = getPasswordField()
+      const passwordField = Helper.getPasswordField()
       expect(passwordField[0].value).toBe('')
       expect(passwordField[0].required).toBeTruthy()
     })
 
     it('should render password confirmation field correctly', () => {
       makeSut()
-      const passwordField = getPasswordField()
+      const passwordField = Helper.getPasswordField()
       expect(passwordField[1].value).toBe('')
       expect(passwordField[1].required).toBeTruthy()
+    })
+  })
+
+  describe('validation', () => {
+    it('should show name error if Validation fails', () => {
+      const validationError = faker.random.words()
+      makeSut({ validationError })
+      Helper.populateNameField()
+      const errorMessage = screen.getByTestId('error-name')
+      expect(errorMessage.textContent).toBe(validationError)
+    })
+
+    it('should show email error if Validation fails', () => {
+      const validationError = faker.random.words()
+      makeSut({ validationError })
+      Helper.populateEmailField()
+      const errorMessage = screen.getByTestId('error-email')
+      expect(errorMessage.textContent).toBe(validationError)
+    })
+
+    it('should show password error if Validation fails', () => {
+      const validationError = faker.random.words()
+      makeSut({ validationError })
+      Helper.populatePasswordField()
+      const errorMessage = screen.getByTestId('error-password')
+      expect(errorMessage.textContent).toBe(validationError)
+    })
+
+    it('should show passwordConfirmation error if Validation fails', () => {
+      const validationError = faker.random.words()
+      makeSut({ validationError })
+      Helper.populatePasswordConfirmationField()
+      const errorMessage = screen.getByTestId('error-password-confirmation')
+      expect(errorMessage.textContent).toBe(validationError)
     })
   })
 })

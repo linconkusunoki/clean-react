@@ -1,4 +1,4 @@
-import { ChangeEvent, FormEvent, useState } from 'react'
+import { ChangeEvent, FormEvent, useState, useEffect } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import Container from 'react-bootstrap/Container'
 import Row from 'react-bootstrap/Row'
@@ -37,13 +37,18 @@ export const SignUp = ({
     passwordConfirmation: ''
   })
 
-  // useEffect(() => {
-  //   setErrorState({
-  //     ...errorState,
-  //     email: validation.validate('email', state.email),
-  //     password: validation.validate('password', state.password)
-  //   })
-  // }, [state.email, state.password])
+  useEffect(() => {
+    setErrorState({
+      ...errorState,
+      name: validation.validate('name', state.name),
+      email: validation.validate('email', state.email),
+      password: validation.validate('password', state.password),
+      passwordConfirmation: validation.validate(
+        'passwordConfirmation',
+        state.passwordConfirmation
+      )
+    })
+  }, [state.email, state.password])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setState({ ...state, [event.target.name]: event.target.value })

@@ -22,6 +22,11 @@ export const getSubmitButton = () => {
   return screen.getByText(/enviar/i)
 }
 
+export const populateNameField = (name = faker.internet.email()) => {
+  const nameField = getNameField()
+  userEvent.type(nameField, name)
+}
+
 export const populateEmailField = (email = faker.internet.email()) => {
   const emailField = getEmailField()
   userEvent.type(emailField, email)
@@ -30,6 +35,13 @@ export const populateEmailField = (email = faker.internet.email()) => {
 export const populatePasswordField = (password = faker.internet.password()) => {
   const passwordField = getPasswordField()
   userEvent.type(passwordField[0], password)
+}
+
+export const populatePasswordConfirmationField = (
+  password = faker.internet.password()
+) => {
+  const passwordField = getPasswordField()
+  userEvent.type(passwordField[1], password)
 }
 
 export const simulateFormSubmit = async (formId: string) => {
