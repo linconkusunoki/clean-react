@@ -8,7 +8,6 @@ import Button from 'react-bootstrap/Button'
 
 import { Header } from 'presentation/components'
 import { Validation } from 'presentation/protocols/validation'
-import { useEffect } from 'react'
 import { Authentication, SaveAccessToken } from 'domain/usecases'
 
 type SignUpProps = {
@@ -87,7 +86,7 @@ export const SignUp = ({
               data-testid="form-sign-up"
             >
               <Form.Group className="mb-3" controlId="name">
-                <Form.Label>Name</Form.Label>
+                <Form.Label>Nome</Form.Label>
                 <Form.Control
                   name="name"
                   type="text"
