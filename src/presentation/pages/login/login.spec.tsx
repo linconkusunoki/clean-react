@@ -102,7 +102,10 @@ describe('Login component', () => {
 
     it('should disable and change content of submit button on submit', async () => {
       makeSut()
-      const { submitButton } = await Helper.simulateFormSubmit('form-login')
+      const { submitButton } = await Helper.simulateFormSubmit(
+        'form-login',
+        /enviar/i
+      )
       expect(submitButton.closest('button')).toBeDisabled()
       expect(submitButton.className).toBe('visually-hidden')
       expect(screen.getByTestId('spinner')).toBeInTheDocument()
@@ -117,7 +120,7 @@ describe('Login component', () => {
 
       Helper.populateEmailField(email)
       Helper.populatePasswordField(password)
-      await Helper.simulateFormSubmit('form-login')
+      await Helper.simulateFormSubmit('form-login', /enviar/i)
 
       expect(authenticationSpy.params).toEqual({ email, password })
     })
@@ -129,8 +132,8 @@ describe('Login component', () => {
 
       Helper.populateEmailField(email)
       Helper.populatePasswordField(password)
-      await Helper.simulateFormSubmit('form-login')
-      await Helper.simulateFormSubmit('form-login')
+      await Helper.simulateFormSubmit('form-login', /enviar/i)
+      await Helper.simulateFormSubmit('form-login', /enviar/i)
 
       expect(authenticationSpy.callsCount).toBe(1)
     })
@@ -140,7 +143,7 @@ describe('Login component', () => {
       const { authenticationSpy } = makeSut({ validationError })
 
       Helper.populateEmailField()
-      await Helper.simulateFormSubmit('form-login')
+      await Helper.simulateFormSubmit('form-login', /enviar/i)
 
       expect(authenticationSpy.callsCount).toBe(0)
     })
@@ -152,7 +155,7 @@ describe('Login component', () => {
 
       Helper.populateEmailField()
       Helper.populatePasswordField()
-      await Helper.simulateFormSubmit('form-login')
+      await Helper.simulateFormSubmit('form-login', /enviar/i)
 
       const mainError = screen.getByTestId('login-error-message')
       expect(mainError.textContent).toBe(error.message)
@@ -164,7 +167,7 @@ describe('Login component', () => {
 
       Helper.populateEmailField()
       Helper.populatePasswordField()
-      await Helper.simulateFormSubmit('form-login')
+      await Helper.simulateFormSubmit('form-login', /enviar/i)
 
       expect(saveAccessTokenMock.accessToken).toBe(accessToken)
       expect(history.length).toBe(1)
@@ -180,7 +183,7 @@ describe('Login component', () => {
 
       Helper.populateEmailField()
       Helper.populatePasswordField()
-      await Helper.simulateFormSubmit('form-login')
+      await Helper.simulateFormSubmit('form-login', /enviar/i)
 
       const mainError = screen.getByTestId('login-error-message')
       expect(mainError.textContent).toBe(error.message)

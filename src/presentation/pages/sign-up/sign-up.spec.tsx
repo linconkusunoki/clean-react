@@ -109,5 +109,16 @@ describe('Login component', () => {
       const errorMessage = screen.getByTestId('error-password-confirmation')
       expect(errorMessage.textContent).toBe(validationError)
     })
+
+    it('should disable and change content of submit button on submit', async () => {
+      makeSut()
+      const { submitButton } = await Helper.simulateFormSubmit(
+        'form-sign-up',
+        /cadastrar/i
+      )
+      expect(submitButton.closest('button')).toBeDisabled()
+      expect(submitButton.className).toBe('visually-hidden')
+      expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    })
   })
 })

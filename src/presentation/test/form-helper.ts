@@ -18,8 +18,8 @@ export const getPasswordField = () => {
   return screen.getAllByLabelText(/senha/i) as HTMLInputElement[]
 }
 
-export const getSubmitButton = () => {
-  return screen.getByText(/enviar/i)
+export const getSubmitButton = (text: RegExp) => {
+  return screen.getByText(text)
 }
 
 export const populateNameField = (name = faker.internet.email()) => {
@@ -44,8 +44,11 @@ export const populatePasswordConfirmationField = (
   userEvent.type(passwordField[1], password)
 }
 
-export const simulateFormSubmit = async (formId: string) => {
-  const submitButton = getSubmitButton()
+export const simulateFormSubmit = async (
+  formId: string,
+  buttonText: RegExp
+) => {
+  const submitButton = getSubmitButton(buttonText)
   userEvent.click(submitButton)
   await waitFor(() => screen.getByTestId(formId))
   return { submitButton }
