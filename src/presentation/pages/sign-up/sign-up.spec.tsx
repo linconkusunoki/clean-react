@@ -4,16 +4,17 @@ import { createMemoryHistory } from 'history'
 import { render, RenderResult, screen } from '@testing-library/react'
 
 import {
-  AuthenticationSpy,
+  AddAccountSpy,
   ValidationStub,
   SaveAccessTokenMock,
   Helper
 } from 'presentation/test'
 import { SignUp } from './sign-up'
+import { EmailInUseError } from 'domain/errors'
 
 type SutTypes = {
   sut: RenderResult
-  authenticationSpy: AuthenticationSpy
+  addAccountSpy: AddAccountSpy
   saveAccessTokenMock: SaveAccessTokenMock
 }
 
@@ -26,18 +27,18 @@ const history = createMemoryHistory({ initialEntries: ['/sign-up'] })
 const makeSut = (params?: SutParams): SutTypes => {
   const saveAccessTokenMock = new SaveAccessTokenMock()
   const validationStub = new ValidationStub()
-  const authenticationSpy = new AuthenticationSpy()
+  const addAccountSpy = new AddAccountSpy()
   validationStub.errorMessage = params?.validationError
   const sut = render(
     <Router history={history}>
       <SignUp
         validation={validationStub}
-        authentication={authenticationSpy}
+        addAccount={addAccountSpy}
         saveAccessToken={saveAccessTokenMock}
       />
     </Router>
   )
-  return { sut, authenticationSpy, saveAccessTokenMock }
+  return { sut, addAccountSpy, saveAccessTokenMock }
 }
 
 describe('Login component', () => {
@@ -119,6 +120,86 @@ describe('Login component', () => {
       expect(submitButton.closest('button')).toBeDisabled()
       expect(submitButton.className).toBe('visually-hidden')
       expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    })
+  })
+
+  describe('add account', () => {
+    it('should call AddAccount with correct values', async () => {
+      const { addAccountSpy } = makeSut()
+      const name = faker.internet.userName()
+      const email = faker.internet.email()
+      const password = faker.internet.password()
+
+      Helper.populateNameField(name)
+      Helper.populateEmailField(email)
+      Helper.populatePasswordField(password)
+      Helper.populatePasswordConfirmationField(password)
+      await Helper.simulateFormSubmit('form-sign-up', /cadastrar/i)
+
+      expect(addAccountSpy.params).toEqual({
+        name,
+        email,
+        password,
+        passwordConfirmation: password
+      })
+    })
+
+    it('should call AddAccount only once', async () => {
+      const { addAccountSpy } = makeSut()
+
+      Helper.populateSignUpFields()
+      await Helper.simulateFormSubmit('form-sign-up', /cadastrar/i)
+      await Helper.simulateFormSubmit('form-sign-up', /cadastrar/i)
+
+      expect(addAccountSpy.callsCount).toBe(1)
+    })
+
+    it('should not call AddAccount if form is invalid', async () => {
+      const validationError = faker.random.words()
+      const { addAccountSpy } = makeSut({ validationError })
+
+      Helper.populateEmailField()
+      await Helper.simulateFormSubmit('form-sign-up', /cadastrar/i)
+
+      expect(addAccountSpy.callsCount).toBe(0)
+    })
+
+    it('should present error if AddAccount fails', async () => {
+      const { addAccountSpy } = makeSut()
+      const error = new EmailInUseError()
+      jest.spyOn(addAccountSpy, 'add').mockRejectedValue(error)
+
+      Helper.populateSignUpFields()
+      await Helper.simulateFormSubmit('form-sign-up', /cadastrar/i)
+
+      const mainError = screen.getByTestId('login-error-message')
+      expect(mainError.textContent).toBe(error.message)
+    })
+
+    it('should call SaveAccessToken on success', async () => {
+      const { addAccountSpy, saveAccessTokenMock } = makeSut()
+      const { accessToken } = addAccountSpy.account
+
+      Helper.populateSignUpFields()
+      await Helper.simulateFormSubmit('form-sign-up', /cadastrar/i)
+
+      expect(saveAccessTokenMock.accessToken).toBe(accessToken)
+      expect(history.length).toBe(1)
+      expect(history.location.pathname).toBe('/')
+    })
+
+    it('should present error if SaveAccessToken fails', async () => {
+      const { saveAccessTokenMock } = makeSut()
+      const error = new EmailInUseError()
+      jest.spyOn(saveAccessTokenMock, 'save').mockImplementationOnce(() => {
+        throw error
+      })
+
+      Helper.populateSignUpFields()
+      await Helper.simulateFormSubmit('form-sign-up', /cadastrar/i)
+
+      const mainError = screen.getByTestId('login-error-message')
+      expect(mainError.textContent).toBe(error.message)
     })
   })
 

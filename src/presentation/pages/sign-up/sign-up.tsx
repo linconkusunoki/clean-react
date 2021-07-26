@@ -8,17 +8,17 @@ import Button from 'react-bootstrap/Button'
 
 import { Header } from 'presentation/components'
 import { Validation } from 'presentation/protocols/validation'
-import { Authentication, SaveAccessToken } from 'domain/usecases'
+import { AddAccount, Authentication, SaveAccessToken } from 'domain/usecases'
 
 type SignUpProps = {
   validation: Validation
-  authentication: Authentication
+  addAccount: AddAccount
   saveAccessToken: SaveAccessToken
 }
 
 export const SignUp = ({
   validation,
-  authentication,
+  addAccount,
   saveAccessToken
 }: SignUpProps) => {
   const history = useHistory()
@@ -60,14 +60,21 @@ export const SignUp = ({
     event.preventDefault()
 
     try {
-      if (errorState.email || errorState.password) {
+      if (
+        errorState.email ||
+        errorState.password ||
+        errorState.name ||
+        errorState.passwordConfirmation
+      ) {
         return
       }
 
       setState({ ...state, isLoading: true })
-      const account = await authentication.auth({
+      const account = await addAccount.add({
+        name: state.name,
         email: state.email,
-        password: state.password
+        password: state.password,
+        passwordConfirmation: state.passwordConfirmation
       })
       saveAccessToken.save(account.accessToken)
       history.replace('/')
@@ -141,10 +148,10 @@ export const SignUp = ({
                 )}
               </Form.Group>
 
-              <Form.Group className="mb-3" controlId="password-confirmation">
+              <Form.Group className="mb-3" controlId="passwordConfirmation">
                 <Form.Label>Confirme sua Senha</Form.Label>
                 <Form.Control
-                  name="password-confirmation"
+                  name="passwordConfirmation"
                   type="password"
                   placeholder="Digite sua senha"
                   value={state.passwordConfirmation}
