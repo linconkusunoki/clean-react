@@ -53,3 +53,7 @@ export const simulateFormSubmit = async (
   await waitFor(() => screen.getByTestId(formId))
   return { submitButton }
 }
+
+export const backToLogin = () => {
+  userEvent.click(screen.getByText(/voltar para login/i))
+}

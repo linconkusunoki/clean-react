@@ -21,7 +21,7 @@ type SutParams = {
   validationError: string
 }
 
-const history = createMemoryHistory({ initialEntries: ['/login'] })
+const history = createMemoryHistory({ initialEntries: ['/sign-up'] })
 
 const makeSut = (params?: SutParams): SutTypes => {
   const saveAccessTokenMock = new SaveAccessTokenMock()
@@ -119,6 +119,15 @@ describe('Login component', () => {
       expect(submitButton.closest('button')).toBeDisabled()
       expect(submitButton.className).toBe('visually-hidden')
       expect(screen.getByTestId('spinner')).toBeInTheDocument()
+    })
+  })
+
+  describe('navigation', () => {
+    it('should go to login page', () => {
+      makeSut()
+      Helper.backToLogin()
+      expect(history.length).toBe(2)
+      expect(history.location.pathname).toBe('/login')
     })
   })
 })

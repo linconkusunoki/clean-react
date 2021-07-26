@@ -145,7 +145,7 @@ export const Login = ({
                   variant="secondary"
                   type="button"
                   as={Link}
-                  to="/register"
+                  to="/sign-up"
                 >
                   Criar conta
                 </Button>

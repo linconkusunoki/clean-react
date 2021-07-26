@@ -195,7 +195,7 @@ describe('Login component', () => {
       makeSut()
       userEvent.click(screen.getByText(/criar conta/i))
       expect(history.length).toBe(2)
-      expect(history.location.pathname).toBe('/register')
+      expect(history.location.pathname).toBe('/sign-up')
     })
   })
 })
