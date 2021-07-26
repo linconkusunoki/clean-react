@@ -3,7 +3,7 @@ import { HttpPostClientSpy } from 'data/test'
 import { AddAccountParams } from 'domain/usecases'
 import { AccountModel } from 'domain/models'
 import { RemoteAddAccount } from './remote-add-account'
-import { mockAddAccountParams } from 'domain/test'
+import { mockAccountModel, mockAddAccountParams } from 'domain/test'
 import { HttpStatusCode } from 'data/protocols/http'
 import { EmailInUseError, UnexpectedError } from 'domain/errors'
 
@@ -61,6 +61,15 @@ describe('RemoteAddAccount', () => {
     const { sut, httpPostClientSpy } = makeSut()
     httpPostClientSpy.response = {
       statusCode: HttpStatusCode.serverError
+    }
+    const promise = sut.add(mockAddAccountParams())
+    await expect(promise).rejects.toThrow(new UnexpectedError())
+  })
+
+  test('should throw unexpected error if HttpPostClient returns 404', async () => {
+    const { sut, httpPostClientSpy } = makeSut()
+    httpPostClientSpy.response = {
+      statusCode: HttpStatusCode.notFound
     }
     const promise = sut.add(mockAddAccountParams())
     await expect(promise).rejects.toThrow(new UnexpectedError())
