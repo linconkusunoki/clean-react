@@ -38,14 +38,16 @@ export const SignUp = ({
   })
 
   useEffect(() => {
+    const { name, email, password, passwordConfirmation } = state
+    const formData = { name, email, password, passwordConfirmation }
     setErrorState({
       ...errorState,
-      name: validation.validate('name', state.name),
-      email: validation.validate('email', state.email),
-      password: validation.validate('password', state.password),
+      name: validation.validate('name', formData),
+      email: validation.validate('email', formData),
+      password: validation.validate('password', formData),
       passwordConfirmation: validation.validate(
         'passwordConfirmation',
-        state.passwordConfirmation
+        formData
       )
     })
   }, [state.email, state.password])
