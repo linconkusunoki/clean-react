@@ -50,7 +50,7 @@ export const SignUp = ({
         formData
       )
     })
-  }, [state.email, state.password])
+  }, [state.name, state.email, state.password, state.passwordConfirmation])
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>): void => {
     setState({ ...state, [event.target.name]: event.target.value })
