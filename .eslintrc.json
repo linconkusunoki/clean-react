@@ -4,17 +4,27 @@
       "version": "detect"
     }
   },
-  "extends": ["plugin:react/recommended", "plugin:prettier/recommended"],
-  "plugins": ["react"],
+  "extends": [
+    "plugin:react/recommended",
+    "plugin:prettier/recommended",
+    "plugin:cypress/recommended"
+  ],
+  "plugins": ["react", "cypress"],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "project": "./tsconfig.json",
+    "project": "./tsconfig-eslint.json",
     "ecmaVersion": 2021,
     "sourceType": "module",
     "ecmaFeatures": {
       "jsx": true,
       "modules": true
     }
+  },
+  "globals": {
+    "cy": true
+  },
+  "env": {
+    "cypress/globals": true
   },
   "rules": {
     "@typescript-eslint/consistent-type-definitions": "off",
