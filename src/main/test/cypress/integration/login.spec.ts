@@ -1,3 +1,5 @@
+import faker from 'faker '
+
 describe('Login', () => {
   beforeEach(() => {
     cy.visit('login')
