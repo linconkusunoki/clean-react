@@ -12,5 +12,9 @@ export const mockAxios = (): jest.Mocked<typeof axios> => {
     data: faker.random.objectElement(),
     status: faker.datatype.number()
   })
+  mockedAxios.get.mockResolvedValue({
+    data: faker.random.objectElement(),
+    status: faker.datatype.number()
+  })
   return mockedAxios
 }
