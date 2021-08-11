@@ -8,11 +8,11 @@ export const mockHttpResponse = () => ({
 
 export const mockAxios = (): jest.Mocked<typeof axios> => {
   const mockedAxios = axios as jest.Mocked<typeof axios>
-  mockedAxios.post.mockResolvedValue({
+  mockedAxios.post.mockClear().mockResolvedValue({
     data: faker.random.objectElement(),
     status: faker.datatype.number()
   })
-  mockedAxios.get.mockResolvedValue({
+  mockedAxios.get.mockClear().mockResolvedValue({
     data: faker.random.objectElement(),
     status: faker.datatype.number()
   })
